@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Դարան</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600;7..72,700&family=Sora:wght@400;500;600;700&display=swap');
+html,body{margin:0;padding:0;}
+
+.theme-dark {
+  --bg:oklch(16% 0.015 45); --card:oklch(21% 0.018 45); --card-border:oklch(32% 0.02 45 / 45%);
+  --text:oklch(94% 0.01 45); --muted:oklch(68% 0.02 45);
+  --input-bg:oklch(19% 0.015 45); --input-border:oklch(34% 0.02 45); --input-placeholder:oklch(55% 0.02 45);
+  --ghost-bg:oklch(26% 0.02 45); --ghost-bg-hover:oklch(30% 0.02 45);
+  --divider:oklch(28% 0.02 45); --chip-text:oklch(80% 0.02 45); --box-border:oklch(50% 0.02 45); --track:oklch(30% 0.02 45);
+  --apricot:oklch(78% 0.14 55); --apricot-solid:oklch(72% 0.15 55); --apricot-ink:oklch(15% 0.02 55);
+  --moss-bg:oklch(40% 0.06 150); --moss-text:oklch(75% 0.1 150); --star:oklch(80% 0.15 85);
+  --dot:oklch(94% 0.01 45 / 5%); --cover-ghost:oklch(24% 0.01 45);
+}
+.theme-light {
+  --bg:oklch(97% 0.008 75); --card:oklch(100% 0 0); --card-border:oklch(85% 0.01 60);
+  --text:oklch(22% 0.015 45); --muted:oklch(46% 0.02 45);
+  --input-bg:oklch(99% 0.004 75); --input-border:oklch(82% 0.012 60); --input-placeholder:oklch(62% 0.015 45);
+  --ghost-bg:oklch(93% 0.008 60); --ghost-bg-hover:oklch(89% 0.01 60);
+  --divider:oklch(88% 0.01 60); --chip-text:oklch(40% 0.02 45); --box-border:oklch(70% 0.015 55); --track:oklch(85% 0.01 60);
+  --apricot:oklch(50% 0.16 50); --apricot-solid:oklch(64% 0.17 50); --apricot-ink:oklch(19% 0.03 50);
+  --moss-bg:oklch(90% 0.05 150); --moss-text:oklch(33% 0.09 150); --star:oklch(60% 0.17 75);
+  --dot:oklch(20% 0.01 45 / 6%); --cover-ghost:oklch(90% 0.008 60);
+}
+
+.daran { font-family:'Sora',sans-serif; background-color:var(--bg); background-image:radial-gradient(var(--dot) 1px, transparent 1px); background-size:24px 24px; color:var(--text); min-height:100vh; transition:background-color 200ms ease-out, color 200ms ease-out; }
+.daran * { box-sizing:border-box; }
+.serif { font-family:'Literata',serif; }
+.muted { color:var(--muted); }
+.card { background:var(--card); border:1px solid var(--card-border); border-radius:16px; }
+.apricot { color:var(--apricot); }
+.apricot-bg { background:var(--apricot-solid); }
+.moss-bg { background:var(--moss-bg); }
+.moss-text { color:var(--moss-text); }
+.btn { font-family:'Sora',sans-serif; border:none; cursor:pointer; transition:transform 160ms ease-out, background 160ms ease-out, filter 160ms ease-out; color:var(--text); }
+.btn:active { transform:scale(0.97); }
+.btn-primary { background:var(--apricot-solid); color:var(--apricot-ink); font-weight:600; }
+.btn-primary:hover { filter:brightness(1.08); }
+.btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+.btn-ghost { background:var(--ghost-bg); color:var(--text); }
+.btn-ghost:hover { background:var(--ghost-bg-hover); }
+.input, select.input { font-family:'Sora',sans-serif; font-size:16px; background:var(--input-bg); border:1px solid var(--input-border); color:var(--text); border-radius:10px; padding:11px 14px; width:100%; transition:border-color 160ms ease-out, box-shadow 160ms ease-out; }
+.input::placeholder { color:var(--input-placeholder); }
+.input:focus-visible, .btn:focus-visible, .chip:focus-visible, .avatar-btn:focus-visible, .icon-btn:focus-visible, .lang-select:focus-visible { outline:none; box-shadow:0 0 0 2px var(--apricot-solid); }
+.chip { font-family:'Sora',sans-serif; font-size:13px; padding:7px 14px; border-radius:999px; border:1px solid var(--input-border); background:transparent; color:var(--chip-text); cursor:pointer; transition:all 160ms ease-out; white-space:nowrap; }
+.chip:active { transform:scale(0.97); }
+.chip.active { background:var(--apricot-solid); color:var(--apricot-ink); border-color:transparent; font-weight:600; }
+.icon-btn { display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; color:inherit; transition:transform 160ms ease-out, background 160ms ease-out; }
+.icon-btn:active { transform:scale(0.94); }
+.lang-select { font-family:'Sora',sans-serif; font-size:12px; font-weight:700; background:var(--ghost-bg); border:1px solid var(--input-border); color:var(--text); border-radius:8px; padding:7px 6px; cursor:pointer; }
+@media (hover:hover) and (pointer:fine) {
+  .chip:not(.active):hover { border-color:var(--apricot-solid); color:var(--text); }
+  .book-card:hover { transform:translateY(-3px); border-color:color-mix(in oklch, var(--apricot-solid) 40%, transparent); }
+  .avatar-btn:hover { transform:scale(1.05); }
+  .icon-btn:hover { background:var(--ghost-bg); }
+  .fab:hover { filter:brightness(1.08); }
+}
+.book-card { transition:transform 200ms cubic-bezier(0.23,1,0.32,1), border-color 200ms ease-out; cursor:pointer; }
+.avatar-btn { border:2px solid transparent; border-radius:999px; padding:0; cursor:pointer; transition:transform 160ms ease-out, border-color 160ms ease-out; background:none; }
+.avatar-btn:active { transform:scale(0.95); }
+.avatar-btn.selected { border-color:var(--apricot-solid); }
+.checkbox-row { display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:10px; border:1px solid var(--input-border); cursor:pointer; transition:border-color 160ms ease-out, background 160ms ease-out; }
+.checkbox-row.checked { border-color:var(--apricot-solid); background:color-mix(in oklch, var(--apricot-solid) 10%, transparent); }
+.box { width:20px; height:20px; border-radius:6px; border:1.5px solid var(--box-border); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:background 160ms ease-out, border-color 160ms ease-out; }
+.checkbox-row.checked .box { background:var(--apricot-solid); border-color:var(--apricot-solid); }
+.fadein { animation:fadein 300ms cubic-bezier(0.23,1,0.32,1); }
+@keyframes fadein { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.toast { animation:toastin 240ms cubic-bezier(0.23,1,0.32,1); }
+@keyframes toastin { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+.progress-track { height:4px; background:var(--track); border-radius:999px; overflow:hidden; }
+.progress-fill { height:100%; background:var(--apricot-solid); transition:width 300ms cubic-bezier(0.23,1,0.32,1); }
+
+.fab { position:fixed; bottom:calc(20px + env(safe-area-inset-bottom)); right:calc(20px + env(safe-area-inset-right)); width:56px; height:56px; border-radius:999px; display:flex; align-items:center; justify-content:center; box-shadow:0 8px 24px rgba(0,0,0,0.45); z-index:9999; border:none; cursor:pointer; transition:transform 160ms ease-out, filter 160ms ease-out; }
+.fab:active { transform:scale(0.93); }
+.chat-panel { position:fixed; bottom:calc(88px + env(safe-area-inset-bottom)); right:calc(20px + env(safe-area-inset-right)); width:340px; max-width:calc(100vw - 32px); height:460px; max-height:calc(100vh - 150px); z-index:9998; display:flex; flex-direction:column; overflow:hidden; transform-origin:bottom right; animation:chatpop 220ms cubic-bezier(0.23,1,0.32,1); }
+@keyframes chatpop { from { opacity:0; transform:scale(0.92) translateY(6px); } to { opacity:1; transform:scale(1) translateY(0); } }
+.msg { max-width:82%; padding:9px 13px; border-radius:14px; font-size:13.5px; line-height:1.45; }
+.msg.bot { background:var(--ghost-bg); align-self:flex-start; border-bottom-left-radius:4px; }
+.msg.user { background:var(--apricot-solid); color:var(--apricot-ink); align-self:flex-end; border-bottom-right-radius:4px; font-weight:500; }
+.typing-dot { width:5px; height:5px; border-radius:50%; background:var(--muted); display:inline-block; animation:blink 1.1s infinite; }
+.typing-dot:nth-child(2){ animation-delay:0.15s; } .typing-dot:nth-child(3){ animation-delay:0.3s; }
+@keyframes blink { 0%,80%,100%{opacity:0.25;} 40%{opacity:1;} }
+
+@media (prefers-reduced-motion:reduce) {
+  .fadein, .toast, .book-card, .btn, .chip, .checkbox-row, .avatar-btn, .chat-panel, .icon-btn, .fab { animation:none !important; transition:opacity 150ms ease !important; }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+/* ---------------- ICONS ---------------- */
+const Icon = (paths, vb='0 0 24 24') => ({size=16, fill='none', color='currentColor', ...p}) => (
+  <svg width={size} height={size} viewBox={vb} fill={fill} stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}>{paths}</svg>
+);
+const Search = Icon(<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>);
+const StarIcon = Icon(<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>);
+const ShoppingCart = Icon(<><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></>);
+const ChevronLeft = Icon(<path d="m15 18-6-6 6-6"/>);
+const Bell = Icon(<><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></>);
+const BellOff = Icon(<><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.89 17.89 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><line x1="1" y1="1" x2="23" y2="23"/></>);
+const CheckIcon = Icon(<polyline points="20 6 9 17 4 12"/>);
+const MinusIcon = Icon(<line x1="5" y1="12" x2="19" y2="12"/>);
+const PlusIcon = Icon(<><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></>);
+const BookOpenIcon = Icon(<><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>);
+const MessageIcon = Icon(<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>);
+const XIcon = Icon(<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>);
+const SendIcon = Icon(<><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></>);
+const SunIcon = Icon(<><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></>);
+const MoonIcon = Icon(<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/>);
+function BotAvatar({ size=16, fg='currentColor', ink='var(--apricot-ink)' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5.5 3H18a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5.5A1.5 1.5 0 0 1 4 18.5v-14C4 3.7 4.7 3 5.5 3Z" fill={fg}/>
+      <path d="M4 18.5c0-.8.7-1.5 1.5-1.5H19" fill="none" stroke={fg} strokeWidth="1" opacity="0.55"/>
+      <circle cx="9.8" cy="10.6" r="1.15" fill={ink}/>
+      <circle cx="14.4" cy="10.6" r="1.15" fill={ink}/>
+      <path d="M9.7 13.4c1 .9 2.9.9 3.9 0" stroke={ink} strokeWidth="1.3" fill="none" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+const GENRE_ICON = {
+  armenian_classics: (c) => <path d="M3 18 9 6l3 5 3-6 6 13Z" fill="none" stroke={c} strokeWidth="1.4" strokeLinejoin="round"/>,
+  world_classics: (c) => <g fill="none" stroke={c} strokeWidth="1.4"><path d="M6 4v16M18 4v16"/><path d="M4 4h4M16 4h4M4 20h4M16 20h4"/></g>,
+  poetry: (c) => <g fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round"><path d="M20 4 4 20"/><path d="M9.5 15c3-1 5-3 6-6"/></g>,
+  scifi: (c) => <g fill="none" stroke={c} strokeWidth="1.4"><ellipse cx="12" cy="12" rx="9" ry="3.6"/><circle cx="12" cy="12" r="2.6"/></g>,
+  self_growth: (c) => <g fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round"><path d="M4 20V14M9.3 20V10M14.7 20V6M20 20V3"/></g>,
+  history: (c) => <g fill="none" stroke={c} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h12M6 21h12"/><path d="M6 3c0 6 6 6 6 9s-6 3-6 9M18 3c0 6-6 6-6 9s6 3 6 9"/></g>,
+};
+
+/* ---------------- DATA ---------------- */
+const CATEGORY_IDS = ['armenian_classics','world_classics','poetry','scifi','self_growth','history'];
+const CATEGORY_LABELS = {
+  hy:{ armenian_classics:'Հայ Դասականներ', world_classics:'Համաշխարհային Դասականներ', poetry:'Պոեզիա', scifi:'Ֆանտաստիկա', self_growth:'Ինքնազարգացում', history:'Պատմություն' },
+  en:{ armenian_classics:'Armenian Classics', world_classics:'World Classics', poetry:'Poetry', scifi:'Sci-Fi', self_growth:'Self-Growth', history:'History' },
+  ru:{ armenian_classics:'Армянская классика', world_classics:'Мировая классика', poetry:'Поэзия', scifi:'Фантастика', self_growth:'Саморазвитие', history:'История' },
+};
+const COUNTRIES = ['Հայաստան','ԱՄՆ','Ռուսաստան','Ֆրանսիա','Գերմանիա','Վրաստան','Իրան','Լիբանան','Կանադա','Մեծ Բրիտանիա','Իտալիա','Իսպանիա','ԱՄԷ','Ավստրալիա','Այլ'];
+const ERA_IDS = ['classic','contemporary','both'];
+const PACE_IDS = ['daily','weekends','monthly'];
+
+const BOOKS = [
+  { id:1, isbn:null, categoryId:'armenian_classics', rating:4.6, reviewCount:128, dailyPrice:180, spine:'#a8654a',
+    title:{hy:'Վերք Հայաստանի',en:'The Wounds of Armenia',ru:'Раны Армении'},
+    author:{hy:'Խաչատուր Աբովյան',en:'Khachatur Abovian',ru:'Хачатур Абовян'},
+    desc:{hy:'Հայ նոր գրականության հիմնարար վեպը՝ 19-րդ դարի Հայաստանի կյանքի ու պայքարի մասին։',en:'The founding novel of modern Armenian literature, about life and struggle in 19th-century Armenia.',ru:'Основополагающий роман новой армянской литературы о жизни и борьбе Армении XIX века.'} },
+  { id:2, isbn:null, categoryId:'armenian_classics', rating:4.7, reviewCount:94, dailyPrice:150, spine:'#8a7a4f',
+    title:{hy:'Սասունցի Դավիթ',en:'David of Sassoun',ru:'Давид Сасунский'},
+    author:{hy:'Ժողովրդական էպոս',en:'Folk Epic',ru:'Народный эпос'},
+    desc:{hy:'Հայկական դյուցազնավեպի ամենահայտնի ճյուղը՝ Դավիթի սխրանքների մասին։',en:'The most famous branch of the Armenian epic, about the feats of David.',ru:'Самая известная ветвь армянского эпоса о подвигах Давида.'} },
+  { id:3, isbn:'9780143035008', categoryId:'world_classics', rating:4.8, reviewCount:341, dailyPrice:220, spine:'#5f6f8a',
+    title:{hy:'Աննա Կարենինա',en:'Anna Karenina',ru:'Анна Каренина'},
+    author:{hy:'Լև Տոլստոյ',en:'Leo Tolstoy',ru:'Лев Толстой'},
+    desc:{hy:'Ռուս գրականության դասական վեպը՝ սիրո, հասարակության ու ողբերգության մասին։',en:'A classic of Russian literature about love, society, and tragedy.',ru:'Классика русской литературы о любви, обществе и трагедии.'} },
+  { id:4, isbn:'9780060883287', categoryId:'world_classics', rating:4.7, reviewCount:256, dailyPrice:230, spine:'#7a5f8a',
+    title:{hy:'Հարյուր տարվա մենություն',en:'One Hundred Years of Solitude',ru:'Сто лет одиночества'},
+    author:{hy:'Գաբրիել Գարսիա Մարկես',en:'Gabriel García Márquez',ru:'Габриэль Гарсиа Маркес'},
+    desc:{hy:'Բուենդիա ընտանիքի յոթ սերունդների կախարդական պատմությունը։',en:'The magical story of seven generations of the Buendía family.',ru:'Волшебная история семи поколений семьи Буэндиа.'} },
+  { id:5, isbn:null, categoryId:'poetry', rating:4.5, reviewCount:76, dailyPrice:140, spine:'#9a5050',
+    title:{hy:'Երկիր Նաիրի',en:'Land of Nairi',ru:'Страна Наири'},
+    author:{hy:'Եղիշե Չարենց',en:'Yeghishe Charents',ru:'Егише Чаренц'},
+    desc:{hy:'Չարենցի պոեմը՝ հայրենիքի կերպարի ու ինքնության որոնումների մասին։',en:'Charents\u2019 poem on the image of the homeland and the search for identity.',ru:'Поэма Чаренца об образе родины и поисках идентичности.'} },
+  { id:6, isbn:null, categoryId:'poetry', rating:4.6, reviewCount:61, dailyPrice:130, spine:'#8a5a3f',
+    title:{hy:'Բալլադներ',en:'Ballads',ru:'Баллады'},
+    author:{hy:'Հովհաննես Թումանյան',en:'Hovhannes Tumanyan',ru:'Ованес Туманян'},
+    desc:{hy:'Թումանյանի ամենասիրված բալլադների ընտրանին։',en:'A selection of Tumanyan\u2019s best-loved ballads.',ru:'Подборка самых любимых баллад Туманяна.'} },
+  { id:7, isbn:'9780441172719', categoryId:'scifi', rating:4.7, reviewCount:412, dailyPrice:280, spine:'#a87d3f',
+    title:{hy:'Դյուն',en:'Dune',ru:'Дюна'},
+    author:{hy:'Ֆրենկ Հերբերտ',en:'Frank Herbert',ru:'Фрэнк Герберт'},
+    desc:{hy:'Անապատային մոլորակի, իշխանության ու կանխատեսումների էպիկական սագա։',en:'An epic saga of a desert planet, power, and prophecy.',ru:'Эпическая сага о пустынной планете, власти и пророчествах.'} },
+  { id:8, isbn:'9780451524935', categoryId:'scifi', rating:4.8, reviewCount:389, dailyPrice:190, spine:'#4f5f4f',
+    title:{hy:'1984',en:'1984',ru:'1984'},
+    author:{hy:'Ջորջ Օրուել',en:'George Orwell',ru:'Джордж Оруэлл'},
+    desc:{hy:'Դիստոպիկ ապագայի մասին վեպ՝ վերահսկողության ու ազատության մասին։',en:'A dystopian novel about surveillance and freedom.',ru:'Антиутопия о слежке и свободе.'} },
+  { id:9, isbn:'9780735211292', categoryId:'self_growth', rating:4.6, reviewCount:298, dailyPrice:240, spine:'#3f7a6f',
+    title:{hy:'Ատոմային սովորույթներ',en:'Atomic Habits',ru:'Атомные привычки'},
+    author:{hy:'Ջեյմս Քլիր',en:'James Clear',ru:'Джеймс Клир'},
+    desc:{hy:'Փոքր սովորությունների գիտությունը, որոնք ժամանակի հետ կուտակվում են մեծ արդյունքի։',en:'The science of tiny habits that compound into big results over time.',ru:'Наука о маленьких привычках, которые со временем складываются в большие результаты.'} },
+  { id:10, isbn:'9780804139298', categoryId:'self_growth', rating:4.3, reviewCount:187, dailyPrice:200, spine:'#3f6f7a',
+    title:{hy:'Զրոյից մեկ',en:'Zero to One',ru:'От нуля к единице'},
+    author:{hy:'Փիթեր Թիլ',en:'Peter Thiel',ru:'Питер Тиль'},
+    desc:{hy:'Ինչպես կառուցել բացարձակապես նոր բան, ոչ թե կրկնօրինակել գոյություն ունեցողը։',en:'How to build something truly new, instead of copying what already exists.',ru:'Как построить действительно новое, а не копировать существующее.'} },
+  { id:11, isbn:'9780062316097', categoryId:'history', rating:4.7, reviewCount:445, dailyPrice:260, spine:'#7a6f3f',
+    title:{hy:'Sapiens',en:'Sapiens',ru:'Sapiens'},
+    author:{hy:'Յուվալ Նոյ Հարարի',en:'Yuval Noah Harari',ru:'Юваль Ной Харари'},
+    desc:{hy:'Մարդկության պատմությունը՝ քարե դարից մինչև այսօր։',en:'The history of humankind, from the Stone Age to today.',ru:'История человечества от каменного века до наших дней.'} },
+  { id:12, isbn:'9780062464316', categoryId:'history', rating:4.4, reviewCount:203, dailyPrice:250, spine:'#6f5f7a',
+    title:{hy:'Homo Deus',en:'Homo Deus',ru:'Homo Deus'},
+    author:{hy:'Յուվալ Նոյ Հարարի',en:'Yuval Noah Harari',ru:'Юваль Ной Харари'},
+    desc:{hy:'Ապագայի սցենարներ՝ արհեստական բանականությունից մինչև անմահություն։',en:'Scenarios for the future, from artificial intelligence to immortality.',ru:'Сценарии будущего от искусственного интеллекта до бессмертия.'} },
+];
+
+const REVIEWS = {
+  1:[{n:'Անի',t:'Ամեն անգամ նոր բան եմ գտնում այս գրքում։'},{n:'Դավիթ',t:'Ծանր, բայց արժե ամեն էջը։'}],
+  3:[{n:'Լիլիթ',t:'Կարդացի երկրորդ անգամ, ազդեցությունը նույնն էր։'},{n:'Արման',t:'Ամենալավ սիրային վեպն ա, որ կարդացել եմ։'}],
+  7:[{n:'Հայկ',t:'Աշխարհաստեղծումն աներևակայելի ա։'},{n:'Սոնա',t:'Առաջին 100 էջը դանդաղ ա, հետո չես կարող կանգնեցնել։'}],
+  8:[{n:'Վահե',t:'Ամեն տարի վերընթերցում եմ։'},{n:'Նարե',t:'Ահավոր ակտուալ ա այսօր էլ։'}],
+};
+const genericReviews = [{n:'Մարիամ',t:'Խորհուրդ եմ տալիս, արժե ժամանակը։'},{n:'Գոռ',t:'Լավ ընտրություն էր, կարդացի մեկ շնչով։'}];
+const reviewsFor = (id) => REVIEWS[id] || genericReviews;
+
+const AVATARS = [
+  { id:'owl', label:'Բու', bg:'#3f5f4f', icon:(c)=>(<g fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M8 10c0-4 2.5-6 4-6s4 2 4 6-1.5 7-4 7-4-3-4-7Z"/><circle cx="10" cy="10" r="1.4" fill={c} stroke="none"/><circle cx="14" cy="10" r="1.4" fill={c} stroke="none"/><path d="M12 12.5v1.5"/><path d="M6 8c0-2 1-3 2-3M18 8c0-2-1-3-2-3"/></g>) },
+  { id:'fox', label:'Աղվես', bg:'#a8654a', icon:(c)=>(<g fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M7 9 5 5l3 2M17 9l2-4-3 2"/><path d="M12 7c3.5 0 5.5 2.7 5.5 5.8 0 3-2.3 5.2-5.5 5.2s-5.5-2.2-5.5-5.2C6.5 9.7 8.5 7 12 7Z"/><path d="M9.5 18v1.5M14.5 18v1.5"/><rect x="9.7" y="12.5" width="4.6" height="3" rx="1" fill={c} stroke="none"/></g>) },
+  { id:'cat', label:'Կատու', bg:'#5f6f8a', icon:(c)=>(<g fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 15c0-5 2.5-8 6-8s6 3 6 8-2.5 4.5-6 4.5S6 20 6 15Z"/><path d="M7 8l-1-3 3 1.5M17 8l1-3-3 1.5"/><circle cx="10" cy="14" r="1" fill={c} stroke="none"/><circle cx="14" cy="14" r="1" fill={c} stroke="none"/><path d="M11 16.2c.5.5 1.5.5 2 0"/></g>) },
+  { id:'raven', label:'Ագռավ', bg:'#4a4a52', icon:(c)=>(<g fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M6 13c0-4 3-7 6-7s6 3 6 7c0 3-2.5 5-6 5s-6-2-6-5Z"/><path d="M6 12 3 13l3 1"/><circle cx="10.5" cy="11" r="1" fill={c} stroke="none"/><path d="M12 17v2M9.5 19h5"/></g>) },
+  { id:'rabbit', label:'Նապաստակ', bg:'#8a7a4f', icon:(c)=>(<g fill="none" stroke={c} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M9 10c-1-3-.5-6 .8-6.6 1-.5 1.7 1.2 1.2 3.6M15 10c1-3 .5-6-.8-6.6-1-.5-1.7 1.2-1.2 3.6"/><path d="M6.5 15c0-3.5 2.5-6 5.5-6s5.5 2.5 5.5 6-2.5 4.5-5.5 4.5-5.5-1-5.5-4.5Z"/><circle cx="10" cy="14" r="0.9" fill={c} stroke="none"/><circle cx="14" cy="14" r="0.9" fill={c} stroke="none"/></g>) },
+];
+
+/* ---------------- TRANSLATIONS ---------------- */
+const BOT_NAME = 'Գրքիկ Գրքայան';
+const T = {
+  hy: {
+    tagline:'Վարձակալիր, կարդա, կիսվիր։', email:'Էլ. փոստ', password:'Գաղտնաբառ', login:'Մուտք գործել',
+    demoNote:'Դեմո տարբերակ. ցանկացած տվյալով կարող ես մուտք գործել',
+    noAccount:'Դեռ հաշիվ չունե՞ս', createAccount:'Ստեղծել հաշիվ',
+    signupTagline:'Ստեղծիր հաշիվ ու սկսիր կարդալ։',
+    firstName:'Անուն', lastName:'Ազգանուն', phone:'Հեռախոսահամար', country:'Երկիր', address:'Հասցե', optional:'(կամընտիր)',
+    selectCountry:'Ընտրիր երկիրը', signup:'Գրանցվել', backToLogin:'Հետ՝ մուտք գործելու',
+    myPage:'Իմ էջը', home:'Դարան, գլխավոր էջ',
+    cartAria:(n)=>`Զամբյուղ, ${n} ապրանք`,
+    questionCounter:(i,n)=>`Հարց ${i} / ${n}`, next:'Հաջորդը', finish:'Ավարտել',
+    heroLine1:'Հայտնագործիր գիրք,', heroLine2:'որին դեռ չես հանդիպել',
+    heroSubtitle:'Վարձակալիր օրավարձով, կարդա հանգիստ, կիսվիր տպավորությամբ ուրիշների հետ։',
+    searchPlaceholder:'Փնտրիր վերնագրով կամ հեղինակով...', searchLabel:'Փնտրիր գիրք',
+    categoriesLabel:'Կատեգորիաներ', all:'Բոլորը', forYou:'Ձեզ համար', allBooks:'Բոլոր գրքերը',
+    noResults:'Ոչինչ չգտնվեց այս որոնումով։', perDay:'/օր',
+    chooseAvatar:'Ընտրիր ավատար', notifications:'Ստանալ ծանուցումներ կայքից',
+    back:'Հետ', days:'Օրերի քանակ', decreaseDays:'Նվազեցնել օրերի քանակը', increaseDays:'Ավելացնել օրերի քանակը',
+    addToCart:'Ավելացնել', inCart:'Զամբյուղում է', rentNow:'Վարձակալել հիմա',
+    rentedSuccess:(n)=>`✓ Հաջողությամբ վարձակալված է ${n} օրով`,
+    reviews:'Ռեվյուներ', reviewPlaceholder:'Կիսվիր տպավորությամբ...', send:'Ուղարկել', reviewLabel:'Գրիր ռեվյու', dayUnit:'օր',
+    reviewCount:(n)=>`${n} ռեվյու`, you:'Դու',
+    cartTitle:'Զամբյուղ', cartEmptyTitle:'Դեռ ապրանքներ չկան', cartEmptySubtitle:'Ընտրիր գիրք ու ավելացրու զամբյուղում',
+    browseBooks:'Դիտել գրքերը', total:'Ընդհանուր', rentAll:'Վարձակալել բոլորը',
+    confirmedTitle:'Վարձակալությունը հաստատված է', confirmedSubtitle:(n)=>`${n} գիրք ուղարկվեց քո գրադարան։`,
+    backHome:'Վերադառնալ գլխավոր էջ', removeFromCart:(t)=>`Հեռացնել ${t}-ը զամբյուղից`,
+    quizGenresQ:'Ո՞ր ժանրերն ես նախընտրում', quizEraQ:'Ո՞ր ժամանակաշրջանի գրքերն ես ավելի հաճախ ընտրում', quizPaceQ:'Ինչքա՞ն ես սովորաբար կարդում',
+    eraOptions:{classic:'Դասական (19-րդ դար)', contemporary:'Ժամանակակից (20-21-րդ դար)', both:'Երկուսն էլ հավասարապես'},
+    paceOptions:{daily:'Ամեն օր մի քիչ', weekends:'Հանգստյան օրերին', monthly:'Ամսական մի քանի գիրք'},
+    chatSubtitle:'Հիմնական հարցերի համար', chatPlaceholder:'Գրիր հարցդ...',
+    openChat:'Բացել օգնականի չաթը', closeChat:'Փակել չաթը', typing:`${BOT_NAME}ը գրում է`,
+    themeToggle:'Փոխել ֆոնի ռեժիմը', langLabel:'Կայքի լեզու',
+    greeting:`Բարև՛, ես ${BOT_NAME}ն եմ, Դարան-ի օգնականը։ Հարցրու ինձ վարձակալության, գների կամ գործառույթների մասին։`,
+    fallback:'Կներես, դեռ այս հարցին ուղիղ պատասխան չունեմ։ Փորձիր այլ ձևակերպում, կամ ընտրիր ստորև եղած հարցերից մեկը։',
+    suggestions:['Ինչպե՞ս վարձակալել','Որքա՞ն արժե','Ե՞րբ կլինի upload ֆունկցիան','Ինչպե՞ս թողնել ռեվյու'],
+    faq:[
+      { kws:['վարձակալ','ինչպես եմ վերցնում'], a:'Բացիր ցանկացած գրքի էջը, ընտրիր օրերի քանակը stepper-ով, ու սեղմիր «Վարձակալել հիմա»։ Գինը հաշվարկվում է ինքնաշխատ։' },
+      { kws:['գին','արժ','քանի դրամ','֏'], a:'Օրական վարձավճարը տատանվում է 100–500֏ սահմաններում, կախված գրքից։ Ճշգրիտ գինը երևում ա գրքի էջում։' },
+      { kws:['ներբեռն','upload','իմ գիրք'], a:'Սեփական գիրք ներբեռնելու ֆունկցիան դեռ մշակման փուլում ա։ Հեղինակային իրավունքով պաշտպանված գրքերը հասանելի կլինեն միայն friends-only կիսվելու համար։' },
+      { kws:['ռեվյու','կարծիք','մեկնաբան'], a:'Ամեն գրքի էջում, ներքևում, կարող ես կարդալ ուրիշների ռեվյուները ու ուղիղ այնտեղից թողնել քո սեփականը։' },
+      { kws:['վճար','քարտ','բանկ'], a:'Վճարման ինտեգրացիան դեռ prototype փուլում ա, շուտով կավելացվի իրական քարտով վճարում։' },
+      { kws:['իվենթ','միջոցառում'], a:'Իվենթներ կազմակերպելու ու հրավիրելու ֆունկցիան դեռ ճանապարհին ա, շուտով կհայտնվի։' },
+      { kws:['ժանր','կատեգորիա'], a:'Հիմա կան 6 կատեգորիա՝ Հայ Դասականներ, Համաշխարհային Դասականներ, Պոեզիա, Ֆանտաստիկա, Ինքնազարգացում, Պատմություն։ Կարող ես ֆիլտրել home page-ում։' },
+      { kws:['ավատար','պրոֆիլ'], a:'Իմ էջում (վերևի աջ անկյան icon-ը) կարող ես փոխել ավատարը, անունը, հեռախոսը ու ծանուցումների կարգավորումը։' },
+      { kws:['ուշացում'], a:'Եթե ժամանակին չես կարդում, կարող ես երկարացնել վարձակալությունը գրքի էջից՝ առանց լրացուցիչ տույժի, պարզապես ընտրելով նոր օրեր։' },
+      { kws:['քանի գիրք'], a:'Չկա սահմանափակում, թե քանի գիրք կարող ես միաժամանակ վարձակալել՝ ամեն մեկը հաշվարկվում է առանձին։' },
+      { kws:['լեզու'], a:'Կայքի լեզուն կարող ես փոխել վերևի մենյուից՝ HY/RU/EN ընտրիչով։' },
+      { kws:['աջակցություն','կապ'], a:'Առայժմ ուղիղ կապի ֆունկցիա չկա prototype-ում, բայց շուտով կավելացվի support chat։' },
+      { kws:['ջնջել հաշիվ'], a:'Հաշիվը ջնջելու ֆունկցիան դեռ չկա prototype-ում, բայց դա planned ֆիչր ա։' },
+    ],
+  },
+  en: {
+    tagline:'Rent, read, share.', email:'Email', password:'Password', login:'Log in',
+    demoNote:'Demo mode: any details will get you in',
+    noAccount:'No account yet?', createAccount:'Create account',
+    signupTagline:'Create an account and start reading.',
+    firstName:'First name', lastName:'Last name', phone:'Phone number', country:'Country', address:'Address', optional:'(optional)',
+    selectCountry:'Choose your country', signup:'Sign up', backToLogin:'Back to login',
+    myPage:'My page', home:'Daran, home',
+    cartAria:(n)=>`Cart, ${n} items`,
+    questionCounter:(i,n)=>`Question ${i} of ${n}`, next:'Next', finish:'Finish',
+    heroLine1:'Discover a book', heroLine2:'you haven\u2019t met yet',
+    heroSubtitle:'Rent by the day, read at your own pace, share it with others.',
+    searchPlaceholder:'Search by title or author...', searchLabel:'Search books',
+    categoriesLabel:'Categories', all:'All', forYou:'For you', allBooks:'All books',
+    noResults:'Nothing matched this search.', perDay:'/day',
+    chooseAvatar:'Choose an avatar', notifications:'Get notifications from the site',
+    back:'Back', days:'Number of days', decreaseDays:'Decrease days', increaseDays:'Increase days',
+    addToCart:'Add', inCart:'In cart', rentNow:'Rent now',
+    rentedSuccess:(n)=>`✓ Rented successfully for ${n} days`,
+    reviews:'Reviews', reviewPlaceholder:'Share your thoughts...', send:'Send', reviewLabel:'Write a review', dayUnit:'days',
+    reviewCount:(n)=>`${n} reviews`, you:'You',
+    cartTitle:'Cart', cartEmptyTitle:'No items yet', cartEmptySubtitle:'Pick a book and add it to your cart',
+    browseBooks:'Browse books', total:'Total', rentAll:'Rent all',
+    confirmedTitle:'Rental confirmed', confirmedSubtitle:(n)=>`${n} book(s) sent to your library.`,
+    backHome:'Back to home', removeFromCart:(t)=>`Remove ${t} from cart`,
+    quizGenresQ:'Which genres do you prefer?', quizEraQ:'Which era of books do you pick more often?', quizPaceQ:'How much do you usually read?',
+    eraOptions:{classic:'Classic (19th century)', contemporary:'Contemporary (20th-21st century)', both:'Both equally'},
+    paceOptions:{daily:'A little every day', weekends:'On weekends', monthly:'A few books a month'},
+    chatSubtitle:'For basic questions', chatPlaceholder:'Type your question...',
+    openChat:'Open assistant chat', closeChat:'Close chat', typing:`${BOT_NAME} is typing`,
+    themeToggle:'Toggle light/dark mode', langLabel:'Site language',
+    greeting:`Hi, I\u2019m ${BOT_NAME}, Daran\u2019s assistant. Ask me about renting, prices, or how things work.`,
+    fallback:'Sorry, I don\u2019t have a direct answer to that yet. Try rephrasing, or pick one of the questions below.',
+    suggestions:['How do I rent a book?','How much does it cost?','When will uploading be available?','How do I leave a review?'],
+    faq:[
+      { kws:['how to rent','how do i rent','rent a book'], a:'Open any book\u2019s page, pick the number of days with the stepper, and tap \u201cRent now\u201d. The price is calculated automatically.' },
+      { kws:['price','cost','how much'], a:'Daily rental price ranges from 100\u2013500\u058F depending on the book. The exact price is shown on the book\u2019s page.' },
+      { kws:['upload','my own book'], a:'Uploading your own books is still in development. Copyright-protected books will only be shareable friends-only.' },
+      { kws:['review','rating'], a:'On every book\u2019s page, scroll down to read others\u2019 reviews and leave your own.' },
+      { kws:['pay','card','payment'], a:'Payment integration is still at the prototype stage. Real card payments are coming soon.' },
+      { kws:['event'], a:'Organizing and inviting people to events is still on the way. Coming soon.' },
+      { kws:['genre','category'], a:'There are 6 categories right now: Armenian Classics, World Classics, Poetry, Sci-Fi, Self-Growth, History. Filter them on the home page.' },
+      { kws:['avatar','profile'], a:'In My Page (top-right icon) you can change your avatar, name, phone, and notification settings.' },
+      { kws:['late','overdue','extend'], a:'If you need more time, you can extend the rental right from the book\u2019s page by adding more days, with no extra penalty.' },
+      { kws:['how many books','limit'], a:'There\u2019s no limit on how many books you can rent at once; each is billed separately.' },
+      { kws:['language'], a:'You can switch the site\u2019s language from the top menu using the HY/RU/EN selector.' },
+      { kws:['support','contact'], a:'There\u2019s no direct contact form in this prototype yet, but live support chat is coming soon.' },
+      { kws:['delete account'], a:'Account deletion isn\u2019t available in this prototype yet, but it\u2019s planned.' },
+    ],
+  },
+  ru: {
+    tagline:'Арендуй, читай, делись.', email:'Эл. почта', password:'Пароль', login:'Войти',
+    demoNote:'Демо-режим: подойдут любые данные',
+    noAccount:'Ещё нет аккаунта?', createAccount:'Создать аккаунт',
+    signupTagline:'Создай аккаунт и начни читать.',
+    firstName:'Имя', lastName:'Фамилия', phone:'Номер телефона', country:'Страна', address:'Адрес', optional:'(необязательно)',
+    selectCountry:'Выбери страну', signup:'Зарегистрироваться', backToLogin:'Назад ко входу',
+    myPage:'Моя страница', home:'Daran, главная',
+    cartAria:(n)=>`Корзина, ${n} товар(ов)`,
+    questionCounter:(i,n)=>`Вопрос ${i} из ${n}`, next:'Далее', finish:'Завершить',
+    heroLine1:'Найди книгу,', heroLine2:'с которой ещё не знаком',
+    heroSubtitle:'Арендуй на день, читай спокойно, делись впечатлениями с другими.',
+    searchPlaceholder:'Поиск по названию или автору...', searchLabel:'Поиск книг',
+    categoriesLabel:'Категории', all:'Все', forYou:'Для тебя', allBooks:'Все книги',
+    noResults:'По этому запросу ничего не найдено.', perDay:'/день',
+    chooseAvatar:'Выбери аватар', notifications:'Получать уведомления с сайта',
+    back:'Назад', days:'Количество дней', decreaseDays:'Уменьшить количество дней', increaseDays:'Увеличить количество дней',
+    addToCart:'Добавить', inCart:'В корзине', rentNow:'Арендовать сейчас',
+    rentedSuccess:(n)=>`✓ Успешно арендовано на ${n} дней`,
+    reviews:'Отзывы', reviewPlaceholder:'Поделись впечатлением...', send:'Отправить', reviewLabel:'Написать отзыв', dayUnit:'дней',
+    reviewCount:(n)=>`${n} отзывов`, you:'Ты',
+    cartTitle:'Корзина', cartEmptyTitle:'Пока нет товаров', cartEmptySubtitle:'Выбери книгу и добавь её в корзину',
+    browseBooks:'Смотреть книги', total:'Итого', rentAll:'Арендовать всё',
+    confirmedTitle:'Аренда подтверждена', confirmedSubtitle:(n)=>`${n} книг(и) отправлены в твою библиотеку.`,
+    backHome:'Вернуться на главную', removeFromCart:(t)=>`Убрать ${t} из корзины`,
+    quizGenresQ:'Какие жанры ты предпочитаешь?', quizEraQ:'Книги какого периода выбираешь чаще?', quizPaceQ:'Сколько ты обычно читаешь?',
+    eraOptions:{classic:'Классика (XIX век)', contemporary:'Современность (XX-XXI век)', both:'И то, и другое'},
+    paceOptions:{daily:'Понемногу каждый день', weekends:'По выходным', monthly:'Несколько книг в месяц'},
+    chatSubtitle:'Для базовых вопросов', chatPlaceholder:'Напиши вопрос...',
+    openChat:'Открыть чат помощника', closeChat:'Закрыть чат', typing:`${BOT_NAME} печатает`,
+    themeToggle:'Переключить светлую/тёмную тему', langLabel:'Язык сайта',
+    greeting:`Привет, я ${BOT_NAME}, помощник Daran. Спроси меня об аренде, ценах или о том, как всё работает.`,
+    fallback:'Извини, пока нет точного ответа на это. Попробуй переформулировать или выбери один из вопросов ниже.',
+    suggestions:['Как арендовать книгу?','Сколько это стоит?','Когда появится загрузка книг?','Как оставить отзыв?'],
+    faq:[
+      { kws:['как арендовать','аренда книги'], a:'Открой страницу любой книги, выбери количество дней и нажми «Арендовать сейчас». Цена считается автоматически.' },
+      { kws:['цена','стоимость','сколько стоит'], a:'Стоимость аренды в день: от 100 до 500 драм, в зависимости от книги. Точная цена указана на странице книги.' },
+      { kws:['загруз','своя книга'], a:'Функция загрузки своих книг ещё в разработке. Книги с авторским правом можно будет делиться только с друзьями.' },
+      { kws:['отзыв','рецензия'], a:'На странице каждой книги внизу можно прочитать отзывы других и оставить свой.' },
+      { kws:['оплат','карта'], a:'Интеграция оплаты пока на стадии прототипа, скоро появится оплата картой.' },
+      { kws:['мероприят','событ'], a:'Функция мероприятий ещё в пути, скоро появится.' },
+      { kws:['жанр','категор'], a:'Сейчас есть 6 категорий: Армянская классика, Мировая классика, Поэзия, Фантастика, Саморазвитие, История. Фильтруй их на главной.' },
+      { kws:['аватар','профиль'], a:'На странице «Моя страница» (иконка справа сверху) можно поменять аватар, имя, телефон и настройки уведомлений.' },
+      { kws:['просроч','позд','продлить'], a:'Если не успеваешь дочитать, можно продлить аренду прямо со страницы книги, просто добавив ещё дней, без штрафа.' },
+      { kws:['сколько книг','лимит'], a:'Ограничений нет: можно арендовать сколько угодно книг одновременно, каждая считается отдельно.' },
+      { kws:['язык'], a:'Язык сайта можно поменять в верхнем меню через переключатель HY/RU/EN.' },
+      { kws:['поддержка','связ'], a:'Прямой связи в этом прототипе пока нет, но скоро появится чат поддержки.' },
+      { kws:['удалить аккаунт'], a:'Удаление аккаунта пока недоступно в этом прототипе, но это в планах.' },
+    ],
+  },
+};
+function answerFor(text, lang) {
+  const t = text.toLowerCase();
+  const faq = T[lang].faq;
+  const hit = faq.find(f => f.kws.some(k => t.includes(k)));
+  return hit ? hit.a : T[lang].fallback;
+}
+
+let uid = 0;
+const nextId = () => 'm' + (uid++);
+
+/* ---------------- SMALL PIECES ---------------- */
+function Stars({ rating, size=14 }) {
+  return (<span style={{display:'inline-flex',alignItems:'center',gap:2}}><StarIcon size={size} fill="var(--star)" color="var(--star)"/><span style={{fontSize:13,fontWeight:600}}>{rating.toFixed(1)}</span></span>);
+}
+function BgMotif({ style }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 200 100" style={{position:'absolute',opacity:0.08,pointerEvents:'none',...style}}>
+      <path d="M0 100 40 30 60 55 90 15 140 100Z" fill="var(--apricot-solid)"/>
+      <path d="M60 100 110 45 130 65 160 25 200 100Z" fill="var(--moss-bg)"/>
+    </svg>
+  );
+}
+function BookCover({ book, lang, h=150 }) {
+  const [photoFailed, setPhotoFailed] = useState(!book.isbn);
+  const glyph = GENRE_ICON[book.categoryId];
+
+  if (!photoFailed) {
+    return (
+      <div style={{height:h,borderRadius:'6px 10px 10px 6px',position:'relative',overflow:'hidden',background:'var(--cover-ghost)',boxShadow:'0 6px 14px rgba(0,0,0,0.3)'}}>
+        <img
+          src={`https://covers.openlibrary.org/b/isbn/${book.isbn}-L.jpg`}
+          alt={`${book.title[lang]}, ${book.author[lang]}`}
+          onLoad={(e)=>{ if (e.target.naturalWidth<=1) setPhotoFailed(true); }}
+          onError={()=>setPhotoFailed(true)}
+          style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{height:h,borderRadius:'6px 10px 10px 6px',position:'relative',overflow:'hidden',
+      background:`radial-gradient(120% 90% at 50% 15%, ${book.spine}, ${book.spine}dd 55%, ${book.spine}99)`,
+      boxShadow:'inset 3px 0 0 rgba(0,0,0,0.3), 0 6px 14px rgba(0,0,0,0.3)'}}>
+      <div aria-hidden="true" style={{position:'absolute',inset:0,opacity:0.07,
+        backgroundImage:'repeating-linear-gradient(115deg, white 0px, white 1px, transparent 1px, transparent 9px)'}}/>
+      <div aria-hidden="true" style={{position:'absolute',top:'10%',left:'50%',transform:'translateX(-50%)',width:h*0.58,height:h*0.58,filter:'drop-shadow(0 4px 8px rgba(0,0,0,0.3))'}}>
+        <svg viewBox="0 0 24 24" width="100%" height="100%">{glyph && glyph('rgba(255,255,255,0.92)')}</svg>
+      </div>
+      <div aria-hidden="true" style={{position:'absolute',bottom:0,left:0,right:0,height:'50%',background:'linear-gradient(to top, rgba(0,0,0,0.6), transparent)'}}/>
+      <div className="serif" style={{position:'absolute',bottom:0,left:0,right:0,padding:'10px 12px 11px'}}>
+        <div style={{fontSize:10,opacity:0.85,fontWeight:500,marginBottom:2,color:'white'}}>{CATEGORY_LABELS[lang][book.categoryId]}</div>
+        <div style={{fontSize:15,fontWeight:600,lineHeight:1.22,textWrap:'balance',color:'white'}}>{book.title[lang]}</div>
+      </div>
+    </div>
+  );
+}
+function Logo() {
+  return (<div style={{display:'flex',alignItems:'center',gap:8}}>
+    <div className="apricot-bg" style={{width:30,height:30,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center'}}><BookOpenIcon size={17} color="var(--apricot-ink)"/></div>
+    <span className="serif" style={{fontSize:19,fontWeight:600}}>Դարան</span>
+  </div>);
+}
+function Header({ setView, cartCount, selectedAvatar, lang, setLang, theme, setTheme, t }) {
+  const AvatarIcon = AVATARS.find(a=>a.id===selectedAvatar) || AVATARS[0];
+  return (
+    <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 20px',borderBottom:'1px solid var(--divider)',gap:10,flexWrap:'wrap'}}>
+      <button className="btn" style={{background:'none'}} onClick={()=>setView('home')} aria-label={t.home}><Logo/></button>
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <select className="lang-select" aria-label={t.langLabel} value={lang} onChange={e=>setLang(e.target.value)}>
+          <option value="hy">HY</option>
+          <option value="ru">RU</option>
+          <option value="en">EN</option>
+        </select>
+        <button className="icon-btn" style={{width:36,height:36,borderRadius:10}} onClick={()=>setTheme(theme==='dark'?'light':'dark')} aria-label={t.themeToggle}>
+          {theme==='dark' ? <SunIcon size={16}/> : <MoonIcon size={16}/>}
+        </button>
+        <button className="icon-btn" style={{width:38,height:38,borderRadius:10,position:'relative'}} aria-label={t.cartAria(cartCount)} onClick={()=>setView('cart')}>
+          <ShoppingCart size={17}/>
+          {cartCount>0 && <span className="apricot-bg" aria-hidden="true" style={{position:'absolute',top:-4,right:-4,fontSize:10,fontWeight:700,color:'var(--apricot-ink)',borderRadius:999,minWidth:16,height:16,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 3px'}}>{cartCount}</span>}
+        </button>
+        <button className="avatar-btn" onClick={()=>setView('profile')} aria-label={t.myPage}>
+          <svg width="38" height="38" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill={AvatarIcon.bg}/>{AvatarIcon.icon('white')}</svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- CHAT WIDGET ---------------- */
+function ChatWidget({ lang, t }) {
+  const [open,setOpen] = useState(false);
+  const [messages,setMessages] = useState([{ id:nextId(), from:'bot', text:t.greeting }]);
+  const [draft,setDraft] = useState('');
+  const [typing,setTyping] = useState(false);
+  const listRef = useRef(null);
+  const inputRef = useRef(null);
+
+  useEffect(() => { setMessages(m => [{ id:nextId(), from:'bot', text:t.greeting }, ...m.slice(1)]); }, [lang]);
+  useEffect(() => { if(open && inputRef.current) inputRef.current.focus(); }, [open]);
+  useEffect(() => { if(listRef.current) listRef.current.scrollTop = listRef.current.scrollHeight; }, [messages, typing]);
+
+  const send = (text) => {
+    const clean = text.trim();
+    if (!clean) return;
+    setMessages(m => [...m, { id:nextId(), from:'user', text:clean }]);
+    setDraft('');
+    setTyping(true);
+    setTimeout(() => {
+      setTyping(false);
+      setMessages(m => [...m, { id:nextId(), from:'bot', text:answerFor(clean, lang) }]);
+    }, 550);
+  };
+
+  return (
+    <>
+      <button className="fab apricot-bg icon-btn" onClick={()=>setOpen(o=>!o)} aria-label={open?t.closeChat:t.openChat} aria-expanded={open}>
+        {open ? <XIcon size={22} color="var(--apricot-ink)"/> : <BotAvatar size={26} fg="var(--apricot-ink)" ink="var(--apricot-solid)"/>}
+      </button>
+      {open && (
+        <div className="card chat-panel" role="dialog" aria-label={BOT_NAME}>
+          <div style={{padding:'14px 16px',borderBottom:'1px solid var(--divider)',display:'flex',alignItems:'center',justifyContent:'space-between',gap:10}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,minWidth:0}}>
+              <div className="apricot-bg" style={{width:28,height:28,borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}><BotAvatar size={17} fg="var(--apricot-ink)" ink="var(--apricot-solid)"/></div>
+              <div style={{minWidth:0}}><div style={{fontWeight:600,fontSize:14}}>{BOT_NAME}</div><div className="muted" style={{fontSize:11}}>{t.chatSubtitle}</div></div>
+            </div>
+            <button className="icon-btn" style={{width:30,height:30,borderRadius:8,flexShrink:0}} onClick={()=>setOpen(false)} aria-label={t.closeChat}><XIcon size={16}/></button>
+          </div>
+          <div ref={listRef} aria-live="polite" style={{flex:1,overflowY:'auto',padding:14,display:'flex',flexDirection:'column',gap:8}}>
+            {messages.map(m => <div key={m.id} className={`msg ${m.from}`}>{m.text}</div>)}
+            {typing && <div className="msg bot" aria-label={t.typing}><span className="typing-dot"/> <span className="typing-dot"/> <span className="typing-dot"/></div>}
+          </div>
+          <div style={{padding:'8px 14px 0',display:'flex',gap:6,flexWrap:'wrap'}}>
+            {t.suggestions.map(s => (
+              <button key={s} className="chip" style={{fontSize:11,padding:'5px 10px'}} onClick={()=>send(s)}>{s}</button>
+            ))}
+          </div>
+          <div style={{padding:14,display:'flex',gap:8}}>
+            <label htmlFor="chat-input" style={{position:'absolute',width:1,height:1,overflow:'hidden',clip:'rect(0 0 0 0)'}}>{t.chatPlaceholder}</label>
+            <input id="chat-input" ref={inputRef} className="input" style={{padding:'9px 12px',fontSize:13.5}} placeholder={t.chatPlaceholder} value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>e.key==='Enter'&&send(draft)}/>
+            <button className="btn btn-primary icon-btn" style={{width:38,height:38,borderRadius:10,flexShrink:0}} onClick={()=>send(draft)} aria-label={t.send}><SendIcon size={15}/></button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ---------------- VIEWS ---------------- */
+function LoginView({ onSubmit, onSignup, t }) {
+  const [email,setEmail] = useState('');
+  return (
+    <div className="fadein" style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24,position:'relative',overflow:'hidden'}}>
+      <BgMotif style={{width:460,height:230,top:'10%',left:'50%',transform:'translateX(-50%)'}}/>
+      <div style={{width:'100%',maxWidth:380,position:'relative'}}>
+        <div style={{textAlign:'center',marginBottom:32}}>
+          <div style={{display:'flex',justifyContent:'center',marginBottom:14}}><Logo/></div>
+          <p className="muted" style={{fontSize:14}}>{t.tagline}</p>
+        </div>
+        <div className="card" style={{padding:24}}>
+          <label htmlFor="login-email" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.email}</label>
+          <input id="login-email" className="input" style={{marginBottom:14}} placeholder="anna@example.com" value={email} onChange={e=>setEmail(e.target.value)}/>
+          <label htmlFor="login-pass" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.password}</label>
+          <input id="login-pass" className="input" type="password" style={{marginBottom:20}} placeholder="••••••••"/>
+          <button className="btn btn-primary" style={{width:'100%',padding:'12px',borderRadius:10,fontSize:15}} onClick={onSubmit}>{t.login}</button>
+          <p className="muted" style={{fontSize:12,textAlign:'center',marginTop:14}}>{t.demoNote}</p>
+        </div>
+        <p style={{textAlign:'center',marginTop:18,fontSize:14}}>
+          <span className="muted">{t.noAccount}</span>{' '}
+          <button className="btn" style={{background:'none',color:'inherit',textDecoration:'underline',fontWeight:600,padding:0}} onClick={onSignup}>{t.createAccount}</button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SignupView({ onDone, onBack, t }) {
+  const [form,setForm] = useState({ firstName:'', lastName:'', phone:'', email:'', country:'', address:'' });
+  const set = (k,v) => setForm({...form,[k]:v});
+  const valid = form.firstName && form.lastName && form.phone && form.email && form.country;
+  return (
+    <div className="fadein" style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24,position:'relative',overflow:'hidden'}}>
+      <BgMotif style={{width:460,height:230,top:'6%',left:'50%',transform:'translateX(-50%)'}}/>
+      <div style={{width:'100%',maxWidth:420,position:'relative'}}>
+        <div style={{textAlign:'center',marginBottom:28}}>
+          <div style={{display:'flex',justifyContent:'center',marginBottom:14}}><Logo/></div>
+          <p className="muted" style={{fontSize:14}}>{t.signupTagline}</p>
+        </div>
+        <div className="card" style={{padding:24,display:'flex',flexDirection:'column',gap:14}}>
+          <div style={{display:'flex',gap:12}}>
+            <div style={{flex:1}}>
+              <label htmlFor="su-fn" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.firstName}</label>
+              <input id="su-fn" className="input" value={form.firstName} onChange={e=>set('firstName',e.target.value)} placeholder="Անի"/>
+            </div>
+            <div style={{flex:1}}>
+              <label htmlFor="su-ln" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.lastName}</label>
+              <input id="su-ln" className="input" value={form.lastName} onChange={e=>set('lastName',e.target.value)} placeholder="Պետրոսյան"/>
+            </div>
+          </div>
+          <div>
+            <label htmlFor="su-phone" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.phone}</label>
+            <input id="su-phone" className="input" value={form.phone} onChange={e=>set('phone',e.target.value)} placeholder="+374 __ ______"/>
+          </div>
+          <div>
+            <label htmlFor="su-email" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.email}</label>
+            <input id="su-email" className="input" value={form.email} onChange={e=>set('email',e.target.value)} placeholder="anna@example.com"/>
+          </div>
+          <div>
+            <label htmlFor="su-country" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.country}</label>
+            <select id="su-country" className="input" value={form.country} onChange={e=>set('country',e.target.value)}>
+              <option value="" disabled>{t.selectCountry}</option>
+              {COUNTRIES.map(c=><option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="su-addr" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.address} <span className="muted">{t.optional}</span></label>
+            <input id="su-addr" className="input" value={form.address} onChange={e=>set('address',e.target.value)} placeholder="Փողոց, տուն, բնակարան"/>
+          </div>
+          <button className="btn btn-primary" style={{width:'100%',padding:'12px',borderRadius:10,fontSize:15,marginTop:6}} disabled={!valid} onClick={()=>onDone(form)}>{t.signup}</button>
+          <button className="btn" style={{background:'none',color:'inherit',fontSize:13,textDecoration:'underline',padding:0}} onClick={onBack}>{t.backToLogin}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QuizView({ answers, setAnswers, onDone, t }) {
+  const [step,setStep] = useState(0);
+  const lang = t===T.en ? 'en' : t===T.ru ? 'ru' : 'hy';
+  const QUIZ = [
+    { key:'genres', multi:true, q:t.quizGenresQ, options: CATEGORY_IDS.map(id=>({id,label:CATEGORY_LABELS[lang][id]})) },
+    { key:'era', multi:false, q:t.quizEraQ, options: ERA_IDS.map(id=>({id,label:t.eraOptions[id]})) },
+    { key:'pace', multi:false, q:t.quizPaceQ, options: PACE_IDS.map(id=>({id,label:t.paceOptions[id]})) },
+  ];
+  const q = QUIZ[step];
+  const value = answers[q.key];
+  const toggle = (id) => {
+    if (q.multi) { const arr = value || []; setAnswers({...answers,[q.key]: arr.includes(id)?arr.filter(o=>o!==id):[...arr,id]}); }
+    else { setAnswers({...answers,[q.key]:id}); }
+  };
+  const isChecked = (id) => q.multi ? (value||[]).includes(id) : value===id;
+  const canNext = q.multi ? (value||[]).length>0 : !!value;
+  return (
+    <div className="fadein" style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',padding:24,position:'relative',overflow:'hidden'}}>
+      <BgMotif style={{width:440,height:220,top:'8%',left:'50%',transform:'translateX(-50%)'}}/>
+      <div style={{width:'100%',maxWidth:440,position:'relative'}}>
+        <div className="progress-track" style={{marginBottom:28}} role="progressbar" aria-valuenow={step+1} aria-valuemin="1" aria-valuemax={QUIZ.length}><div className="progress-fill" style={{width:`${((step+1)/QUIZ.length)*100}%`}}/></div>
+        <p className="muted" style={{fontSize:13,marginBottom:6}}>{t.questionCounter(step+1,QUIZ.length)}</p>
+        <h2 className="serif" style={{fontSize:22,marginBottom:20,lineHeight:1.3}}>{q.q}</h2>
+        <div role="group" aria-label={q.q} style={{display:'flex',flexDirection:'column',gap:8,marginBottom:24}}>
+          {q.options.map(opt=>(
+            <div key={opt.id} role="checkbox" aria-checked={isChecked(opt.id)} tabIndex="0" className={`checkbox-row ${isChecked(opt.id)?'checked':''}`} onClick={()=>toggle(opt.id)} onKeyDown={e=>e.key==='Enter'&&toggle(opt.id)}>
+              <div className="box">{isChecked(opt.id) && <CheckIcon size={13} color="var(--apricot-ink)"/>}</div>
+              <span style={{fontSize:14}}>{opt.label}</span>
+            </div>
+          ))}
+        </div>
+        <button className="btn btn-primary" style={{width:'100%',padding:12,borderRadius:10,fontSize:15}} disabled={!canNext} onClick={()=>step<QUIZ.length-1?setStep(step+1):onDone()}>
+          {step<QUIZ.length-1?t.next:t.finish}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ProfileView({ profile, setProfile, avatar, setAvatar, setView, t }) {
+  const set = (k,v) => setProfile({...profile,[k]:v});
+  return (
+    <div className="fadein" style={{maxWidth:560,margin:'0 auto',padding:24}}>
+      <button className="btn" style={{background:'none',display:'flex',alignItems:'center',gap:6,marginBottom:20,color:'inherit'}} onClick={()=>setView('home')}><ChevronLeft size={18}/> {t.back}</button>
+      <h1 className="serif" style={{fontSize:26,marginBottom:24}}>{t.myPage}</h1>
+      <p style={{fontSize:14,marginBottom:10,fontWeight:600}} id="avatar-label">{t.chooseAvatar}</p>
+      <div role="group" aria-labelledby="avatar-label" style={{display:'flex',gap:12,marginBottom:28,flexWrap:'wrap'}}>
+        {AVATARS.map(a=>(
+          <button key={a.id} className={`avatar-btn ${avatar===a.id?'selected':''}`} onClick={()=>setAvatar(a.id)} aria-label={a.label} aria-pressed={avatar===a.id}>
+            <svg width="56" height="56" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="12" fill={a.bg}/>{a.icon('white')}</svg>
+          </button>
+        ))}
+      </div>
+      <div className="card" style={{padding:22,display:'flex',flexDirection:'column',gap:14}}>
+        <div style={{display:'flex',gap:12}}>
+          <div style={{flex:1}}><label htmlFor="pf-fn" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.firstName}</label><input id="pf-fn" className="input" value={profile.firstName} onChange={e=>set('firstName',e.target.value)}/></div>
+          <div style={{flex:1}}><label htmlFor="pf-ln" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.lastName}</label><input id="pf-ln" className="input" value={profile.lastName} onChange={e=>set('lastName',e.target.value)}/></div>
+        </div>
+        <div><label htmlFor="pf-phone" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.phone}</label><input id="pf-phone" className="input" value={profile.phone} onChange={e=>set('phone',e.target.value)} placeholder="+374 __ ______"/></div>
+        <div><label htmlFor="pf-email" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.email}</label><input id="pf-email" className="input" value={profile.email} onChange={e=>set('email',e.target.value)}/></div>
+        <div>
+          <label htmlFor="pf-country" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.country}</label>
+          <select id="pf-country" className="input" value={profile.country} onChange={e=>set('country',e.target.value)}>
+            <option value="" disabled>{t.selectCountry}</option>
+            {COUNTRIES.map(c=><option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="pf-addr" style={{fontSize:13,marginBottom:6,display:'block'}}>{t.address} <span className="muted">{t.optional}</span></label>
+          <input id="pf-addr" className="input" value={profile.address} onChange={e=>set('address',e.target.value)} placeholder="Փողոց, տուն, բնակարան"/>
+        </div>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',paddingTop:8,borderTop:'1px solid var(--divider)'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            {profile.notifications ? <Bell size={17}/> : <BellOff size={17} className="muted"/>}
+            <span id="notif-label" style={{fontSize:14}}>{t.notifications}</span>
+          </div>
+          <button role="switch" aria-checked={profile.notifications} aria-labelledby="notif-label" className="btn" onClick={()=>set('notifications',!profile.notifications)} style={{width:44,height:26,borderRadius:999,background:profile.notifications?'var(--apricot-solid)':'var(--track)',position:'relative',padding:0}}>
+            <span aria-hidden="true" style={{position:'absolute',top:3,left:profile.notifications?21:3,width:20,height:20,borderRadius:'50%',background:'white',transition:'left 160ms ease-out'}}/>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BookGrid({ books, lang, t, openBook }) {
+  return (
+    <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill, minmax(170px, 1fr))',gap:18}}>
+      {books.map(b=>(
+        <div key={b.id} role="button" tabIndex="0" aria-label={`${b.title[lang]}, ${b.author[lang]}, ${b.dailyPrice}֏`} className="card book-card" style={{padding:12}} onClick={()=>openBook(b.id)} onKeyDown={e=>e.key==='Enter'&&openBook(b.id)}>
+          <BookCover book={b} lang={lang}/>
+          <div style={{marginTop:10}}>
+            <div style={{fontSize:14,fontWeight:600,lineHeight:1.3,marginBottom:3,textWrap:'balance'}}>{b.title[lang]}</div>
+            <div className="muted" style={{fontSize:12,marginBottom:7}}>{b.author[lang]}</div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+              <Stars rating={b.rating}/><span className="apricot" style={{fontSize:13,fontWeight:700}}>{b.dailyPrice}֏{t.perDay}</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+function HomeView({ search, setSearch, activeCategory, setActiveCategory, quizAnswers, openBook, lang, t }) {
+  const recommended = (quizAnswers.genres||[]).length>0 ? BOOKS.filter(b=>quizAnswers.genres.includes(b.categoryId)) : [];
+  const filtered = BOOKS.filter(b=>{
+    const matchCat = activeCategory==='all' || b.categoryId===activeCategory;
+    const s = search.toLowerCase();
+    const matchSearch = b.title[lang].toLowerCase().includes(s) || b.author[lang].toLowerCase().includes(s);
+    return matchCat && matchSearch;
+  });
+  return (
+    <div className="fadein" style={{maxWidth:1040,margin:'0 auto',padding:'24px'}}>
+      <div style={{position:'relative',overflow:'hidden',marginBottom:24}}>
+        <BgMotif style={{width:520,height:230,top:-70,left:'50%',transform:'translateX(-50%)'}}/>
+        <div style={{position:'relative',textAlign:'center',padding:'14px 12px 4px'}}>
+          <h1 className="serif" style={{fontSize:'clamp(26px,5vw,38px)',fontWeight:700,lineHeight:1.16,marginBottom:10,textWrap:'balance'}}>{t.heroLine1}<br/>{t.heroLine2}</h1>
+          <p className="muted" style={{fontSize:15,maxWidth:420,margin:'0 auto'}}>{t.heroSubtitle}</p>
+        </div>
+      </div>
+      <div style={{position:'relative',marginBottom:20}}>
+        <Search size={17} style={{position:'absolute',left:14,top:13}} className="muted"/>
+        <label htmlFor="book-search" style={{position:'absolute',width:1,height:1,overflow:'hidden',clip:'rect(0 0 0 0)'}}>{t.searchLabel}</label>
+        <input id="book-search" className="input" style={{paddingLeft:40}} placeholder={t.searchPlaceholder} value={search} onChange={e=>setSearch(e.target.value)}/>
+      </div>
+      <div role="group" aria-label={t.categoriesLabel} style={{display:'flex',gap:8,overflowX:'auto',paddingBottom:6,marginBottom:8}}>
+        <button className={`chip ${activeCategory==='all'?'active':''}`} aria-pressed={activeCategory==='all'} onClick={()=>setActiveCategory('all')}>{t.all}</button>
+        {CATEGORY_IDS.map(id=>(
+          <button key={id} className={`chip ${activeCategory===id?'active':''}`} aria-pressed={activeCategory===id} onClick={()=>setActiveCategory(id)}>
+            <svg width="12" height="12" viewBox="0 0 24 24" style={{marginRight:5,verticalAlign:-1}} aria-hidden="true">{GENRE_ICON[id]('currentColor')}</svg>
+            {CATEGORY_LABELS[lang][id]}
+          </button>
+        ))}
+      </div>
+      {recommended.length>0 && activeCategory==='all' && !search && (
+        <div style={{marginBottom:32,marginTop:20}}>
+          <h2 className="serif" style={{fontSize:19,marginBottom:14}}>{t.forYou}</h2>
+          <BookGrid books={recommended.slice(0,4)} lang={lang} t={t} openBook={openBook}/>
+        </div>
+      )}
+      <h2 className="serif" style={{fontSize:19,marginBottom:14,marginTop:recommended.length>0?0:24}}>{activeCategory==='all'?t.allBooks:CATEGORY_LABELS[lang][activeCategory]}</h2>
+      {filtered.length===0 ? <p className="muted" style={{padding:'40px 0',textAlign:'center'}}>{t.noResults}</p> : <BookGrid books={filtered} lang={lang} t={t} openBook={openBook}/>}
+    </div>
+  );
+}
+function CartView({ cart, books, lang, t, setView, removeFromCart, clearCart }) {
+  const [done,setDone] = useState(false);
+  const items = cart.map(c => ({ ...c, book: books.find(b=>b.id===c.id) })).filter(x=>x.book);
+  const total = items.reduce((s,x)=>s + x.book.dailyPrice*x.days, 0);
+
+  if (done) {
+    return (
+      <div className="fadein" style={{maxWidth:480,margin:'0 auto',padding:24,textAlign:'center'}}>
+        <div className="apricot-bg" style={{width:64,height:64,borderRadius:999,display:'flex',alignItems:'center',justifyContent:'center',margin:'40px auto 18px'}}>
+          <CheckIcon size={28} color="var(--apricot-ink)"/>
+        </div>
+        <h2 className="serif" style={{fontSize:22,marginBottom:8}}>{t.confirmedTitle}</h2>
+        <p className="muted" style={{marginBottom:24}}>{t.confirmedSubtitle(items.length)}</p>
+        <button className="btn btn-primary" style={{padding:'11px 22px',borderRadius:10}} onClick={()=>setView('home')}>{t.backHome}</button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fadein" style={{maxWidth:560,margin:'0 auto',padding:24}}>
+      <button className="btn" style={{background:'none',display:'flex',alignItems:'center',gap:6,marginBottom:20,color:'inherit'}} onClick={()=>setView('home')}><ChevronLeft size={18}/> {t.back}</button>
+      <h1 className="serif" style={{fontSize:26,marginBottom:20}}>{t.cartTitle}</h1>
+      {items.length===0 ? (
+        <div className="card" style={{padding:'40px 20px',textAlign:'center'}}>
+          <ShoppingCart size={30} color="var(--muted)" style={{marginBottom:12}}/>
+          <p style={{fontWeight:600,marginBottom:6}}>{t.cartEmptyTitle}</p>
+          <p className="muted" style={{fontSize:13,marginBottom:18}}>{t.cartEmptySubtitle}</p>
+          <button className="btn btn-primary" style={{padding:'10px 20px',borderRadius:10,fontSize:14}} onClick={()=>setView('home')}>{t.browseBooks}</button>
+        </div>
+      ) : (
+        <>
+          <div style={{display:'flex',flexDirection:'column',gap:12,marginBottom:20}}>
+            {items.map(({book,days}) => (
+              <div key={book.id} className="card" style={{padding:12,display:'flex',gap:12,alignItems:'center'}}>
+                <div style={{width:52,flexShrink:0}}><BookCover book={book} lang={lang} h={70}/></div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:14,fontWeight:600,marginBottom:2,textWrap:'balance'}}>{book.title[lang]}</div>
+                  <div className="muted" style={{fontSize:12}}>{days} {t.dayUnit} × {book.dailyPrice}֏</div>
+                </div>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <span className="apricot" style={{fontWeight:700,fontSize:14}}>{days*book.dailyPrice}֏</span>
+                  <button className="icon-btn" style={{width:28,height:28,borderRadius:8}} onClick={()=>removeFromCart(book.id)} aria-label={t.removeFromCart(book.title[lang])}><XIcon size={14}/></button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="card" style={{padding:16}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:14,fontSize:15}}>
+              <span>{t.total}</span><span className="apricot" style={{fontWeight:700,fontSize:19}}>{total}֏</span>
+            </div>
+            <button className="btn btn-primary" style={{width:'100%',padding:12,borderRadius:10,fontSize:15}} onClick={()=>{ clearCart(); setDone(true); }}>{t.rentAll}</button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+function BookDetailView({ book, lang, t, setView, addToCart, cart }) {
+  const [days,setDays] = useState(7);
+  const [comment,setComment] = useState('');
+  const [localReviews,setLocalReviews] = useState(reviewsFor(book.id));
+  const [rented,setRented] = useState(false);
+  const inCart = cart.some(c=>c.id===book.id);
+  const total = days*book.dailyPrice;
+  const submitReview = () => { if(!comment.trim())return; setLocalReviews([{n:t.you,t:comment.trim()},...localReviews]); setComment(''); };
+  return (
+    <div className="fadein" style={{maxWidth:760,margin:'0 auto',padding:24}}>
+      <button className="btn" style={{background:'none',display:'flex',alignItems:'center',gap:6,marginBottom:20,color:'inherit'}} onClick={()=>setView('home')}><ChevronLeft size={18}/> {t.back}</button>
+      <div style={{display:'flex',gap:24,marginBottom:28,flexWrap:'wrap'}}>
+        <div style={{width:180,flexShrink:0}}><BookCover book={book} lang={lang} h={240}/></div>
+        <div style={{flex:1,minWidth:220}}>
+          <span className="chip moss-bg moss-text" style={{border:'none',marginBottom:10,display:'inline-block'}}>{CATEGORY_LABELS[lang][book.categoryId]}</span>
+          <h1 className="serif" style={{fontSize:26,lineHeight:1.25,marginBottom:6,textWrap:'balance'}}>{book.title[lang]}</h1>
+          <p className="muted" style={{marginBottom:12}}>{book.author[lang]}</p>
+          <div style={{marginBottom:14}}><Stars rating={book.rating} size={16}/> <span className="muted" style={{fontSize:13}}>({t.reviewCount(book.reviewCount)})</span></div>
+          <p style={{fontSize:14,lineHeight:1.6,marginBottom:20}}>{book.desc[lang]}</p>
+          <div className="card" style={{padding:16}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+              <span id="days-label" style={{fontSize:14}}>{t.days}</span>
+              <div style={{display:'flex',alignItems:'center',gap:12}}>
+                <button className="icon-btn btn-ghost" style={{width:30,height:30,borderRadius:8}} onClick={()=>setDays(Math.max(1,days-1))} aria-label={t.decreaseDays}><MinusIcon size={14}/></button>
+                <span style={{fontWeight:700,width:20,textAlign:'center'}} aria-live="polite" aria-labelledby="days-label">{days}</span>
+                <button className="icon-btn btn-ghost" style={{width:30,height:30,borderRadius:8}} onClick={()=>setDays(days+1)} aria-label={t.increaseDays}><PlusIcon size={14}/></button>
+              </div>
+            </div>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+              <span className="muted" style={{fontSize:13}}>{book.dailyPrice}֏ × {days}</span>
+              <span className="apricot" style={{fontSize:20,fontWeight:700}}>{total}֏</span>
+            </div>
+            <div style={{display:'flex',gap:10}}>
+              <button className="btn btn-ghost" style={{flex:1,padding:11,borderRadius:10,fontSize:14,display:'flex',alignItems:'center',justifyContent:'center',gap:6}} onClick={()=>addToCart(book.id, days)}>
+                {inCart ? <CheckIcon size={15}/> : <ShoppingCart size={15}/>} {inCart ? t.inCart : t.addToCart}
+              </button>
+              <button className="btn btn-primary" style={{flex:1,padding:11,borderRadius:10,fontSize:14}} onClick={()=>setRented(true)}>{t.rentNow}</button>
+            </div>
+            {rented && <p className="toast apricot" role="status" style={{marginTop:12,fontSize:13,textAlign:'center'}}>{t.rentedSuccess(days)}</p>}
+          </div>
+        </div>
+      </div>
+      <div style={{borderTop:'1px solid var(--divider)',paddingTop:24}}>
+        <h3 className="serif" style={{fontSize:18,marginBottom:14}}>{t.reviews}</h3>
+        <div style={{display:'flex',gap:8,marginBottom:18}}>
+          <label htmlFor="review-input" style={{position:'absolute',width:1,height:1,overflow:'hidden',clip:'rect(0 0 0 0)'}}>{t.reviewLabel}</label>
+          <input id="review-input" className="input" placeholder={t.reviewPlaceholder} value={comment} onChange={e=>setComment(e.target.value)} onKeyDown={e=>e.key==='Enter'&&submitReview()}/>
+          <button className="btn btn-primary" style={{padding:'0 18px',borderRadius:10,fontSize:14}} onClick={submitReview}>{t.send}</button>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12}}>
+          {localReviews.map((r,i)=>(<div key={i} className="card" style={{padding:14}}><div style={{fontWeight:600,fontSize:13,marginBottom:4}}>{r.n}</div><div style={{fontSize:14,lineHeight:1.5}}>{r.t}</div></div>))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- APP ---------------- */
+function App() {
+  const [view,setView] = useState('login');
+  const [lang,setLang] = useState('hy');
+  const [theme,setTheme] = useState('dark');
+  const [quizAnswers,setQuizAnswers] = useState({});
+  const [avatar,setAvatar] = useState('owl');
+  const [profile,setProfile] = useState({firstName:'',lastName:'',phone:'',email:'',country:'',address:'',notifications:true});
+  const [search,setSearch] = useState('');
+  const [activeCategory,setActiveCategory] = useState('all');
+  const [selectedBookId,setSelectedBookId] = useState(null);
+  const [cart,setCart] = useState([]);
+  const t = T[lang];
+  const addToCart = (id, days) => setCart(c => c.some(x=>x.id===id) ? c : [...c, {id, days}]);
+  const removeFromCart = (id) => setCart(c => c.filter(x=>x.id!==id));
+  const clearCart = () => setCart([]);
+  const openBook = (id) => { setSelectedBookId(id); setView('detail'); };
+  const finishSignup = (form) => { setProfile(p=>({...p,...form})); setView('quiz'); };
+  const selectedBook = BOOKS.find(b=>b.id===selectedBookId);
+  return (
+    <div className={`daran theme-${theme}`}>
+      {view==='login' && <LoginView onSubmit={()=>setView('home')} onSignup={()=>setView('signup')} t={t}/>}
+      {view==='signup' && <SignupView onDone={finishSignup} onBack={()=>setView('login')} t={t}/>}
+      {view==='quiz' && <QuizView answers={quizAnswers} setAnswers={setQuizAnswers} onDone={()=>setView('home')} t={t}/>}
+      {(view==='home'||view==='profile'||view==='detail'||view==='cart') && (
+        <>
+          <Header setView={setView} cartCount={cart.length} selectedAvatar={avatar} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme} t={t}/>
+          {view==='home' && <HomeView search={search} setSearch={setSearch} activeCategory={activeCategory} setActiveCategory={setActiveCategory} quizAnswers={quizAnswers} openBook={openBook} lang={lang} t={t}/>}
+          {view==='profile' && <ProfileView profile={profile} setProfile={setProfile} avatar={avatar} setAvatar={setAvatar} setView={setView} t={t}/>}
+          {view==='detail' && selectedBook && <BookDetailView book={selectedBook} lang={lang} t={t} setView={setView} addToCart={addToCart} cart={cart}/>}
+          {view==='cart' && <CartView cart={cart} books={BOOKS} lang={lang} t={t} setView={setView} removeFromCart={removeFromCart} clearCart={clearCart}/>}
+        </>
+      )}
+      <ChatWidget lang={lang} t={t}/>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
